@@ -1,0 +1,108 @@
+#epiphany {
+    float: right;
+    padding: 5px 10px;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.6666;
+    background-image: linear-gradient(to right, #3b82f6, #ec4899, #f59e0b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.rtl #epiphany {
+    float: left;
+}
+.block-editor-page #epiphany {
+    display: none;
+}
+@media screen and (max-width: 782px) {
+    #epiphany,
+    .rtl #epiphany {
+        float: none;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+
+
+
+/* assets/style.css */
+.zkml-toolbox-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.zkml-toolbox-wrap h1, .zkml-toolbox-wrap h2 {
+    text-align: center;
+    color: #333;
+    font-family: 'Arial', sans-serif;
+}
+
+.zkml-toolbox-wrap h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.zkml-toolbox-wrap h2 {
+    font-size: 1.5em;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.zkml-toolbox-wrap .form-table {
+    width: 80%;
+    margin: 0 auto 20px auto; /* 确保表格居中 */
+    border-collapse: collapse;
+}
+
+.zkml-toolbox-wrap .form-table th, .zkml-toolbox-wrap .form-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+}
+
+.zkml-toolbox-wrap .form-table th {
+    font-weight: bold;
+}
+
+.zkml-toolbox-wrap .form-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.zkml-toolbox-wrap .form-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.zkml-toolbox-wrap .form-table th {
+    color: #0073aa;
+}
+
+.zkml-toolbox-wrap .form-table td {
+    color: #555;
+}
+
+@media (max-width: 768px) {
+    .zkml-toolbox-wrap {
+        padding: 10px;
+    }
+
+    .zkml-toolbox-wrap .form-table {
+        width: 100%;
+    }
+
+    .zkml-toolbox-wrap .form-table th, .zkml-toolbox-wrap .form-table td {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .zkml-toolbox-wrap h1 {
+        font-size: 1.5em;
+    }
+
+    .zkml-toolbox-wrap h2 {
+        font-size: 1.2em;
+    }
+}
