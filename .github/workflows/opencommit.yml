@@ -1,0 +1,21 @@
+name: Improve commit messages with OpenCommit
+
+on:
+  push:
+    branches:
+      - main  # 或者你需要监听的其他分支
+
+jobs:
+  opencommit:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Improve commit messages with OpenCommit AI
+      - name: OpenCommit — improve commits with AI 🧙
+        uses: di-sukharev/opencommit@github-action-v1.0.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}  # GitHub 提供的 Token，用于推送改进的提交信息
