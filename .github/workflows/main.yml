@@ -79,7 +79,10 @@ jobs:
           git stash pop || echo "No changes to apply"
 
           git add php-quality-issues.txt rector.php  # 确保 rector.php 被添加到版本控制
-          git commit -m "Add PHP quality issues report"
+
+          # 检查文件是否有更改，如果没有，则跳过提交
+          git diff --exit-code php-quality-issues.txt || git commit -m "Add PHP quality issues report" 
+          
           git push origin main  # 推送到远程 main 分支
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
