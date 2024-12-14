@@ -3,8 +3,7 @@ ERROR: The file "src/" does not exist.
 Run "phpcs --help" for usage information
 
 
- No "rector.php" config found. Should we generate it for you? [yes]:
- > 
-
- [OK] The config is added now. Re-run command to make Rector do the work!       
+ [ERROR] The following given path does not match any file or directory:         
+                                                                                
+          - src/                                                                
 
