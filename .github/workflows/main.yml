@@ -1,0 +1,97 @@
+name: PHP Quality Checks
+
+on:
+  push:
+    branches:
+      - main  # 修改为 main
+  pull_request:
+    branches:
+      - main  # 修改为 main
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2']
+    steps:
+      # 1. Checkout 代码
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. 设置 PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+
+      # 3. 缓存 Composer 依赖
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      # 4. 安装工具
+      - name: Install Tools
+        run: |
+          composer global require phpstan/phpstan
+          composer global require dealerdirect/phpcodesniffer-composer-installer phpcompatibility/php-compatibility
+          ~/.composer/vendor/bin/phpcs --config-set installed_paths ~/.composer/vendor/phpcompatibility/php-compatibility
+          composer global require rector/rector
+
+      # 5. 运行 PHPStan 检查并将结果保存到文件
+      - name: Run PHPStan (Output to file)
+        run: |
+          ~/.composer/vendor/bin/phpstan analyse src/ > php-quality-issues.txt || true
+
+      # 6. 运行 PHPCompatibility 检查并将结果保存到文件
+      - name: Run PHPCompatibility (Output to file)
+        run: |
+          ~/.composer/vendor/bin/phpcs \
+          --standard=PHPCompatibility \
+          --runtime-set testVersion 7.4-8.2 \
+          src/ >> php-quality-issues.txt || true
+
+      # 7. 运行 Rector 检查并将结果保存到文件
+      - name: Run Rector (Output to file)
+        run: |
+          ~/.composer/vendor/bin/rector process src/ --dry-run >> php-quality-issues.txt || true
+
+      # 8. 提交检测问题到文件
+      - name: Commit and Push php-quality-issues.txt
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add php-quality-issues.txt
+          git commit -m "Add PHP quality issues report"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 9. 自动修复代码
+      - name: Apply Rector Fixes (Auto Fix)
+        run: |
+          # 使用 Rector 自动修复代码
+          ~/.composer/vendor/bin/rector process src/ --apply || true
+
+      # 10. 创建新分支并提交修复
+      - name: Create New Branch for Fixes
+        run: |
+          # 创建新分支
+          git checkout -b fix/auto-repair
+          git add .
+          git commit -m "Apply auto fixes"
+          git push --set-upstream origin fix/auto-repair
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 11. 创建 Pull Request
+      - name: Create Pull Request
+        run: |
+          # 使用 GitHub CLI 创建 Pull Request
+          gh pr create --title "Automated PHP Fixes" --body "This pull request includes automated PHP fixes applied by Rector" --base main --head fix/auto-repair  # 修改为 main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
