@@ -9,7 +9,7 @@ License: GPL2
 */
 
 // 注册卸载钩子
-register_uninstall_hook(__FILE__, 'zkml_uninstall');
+register_uninstall-hook(__FILE__, 'zkml_uninstall');
 
 require_once plugin_dir_path(__FILE__) . 'includes/zkmlcore.php';
 
