@@ -62,7 +62,7 @@ jobs:
         run: |
           ~/.composer/vendor/bin/rector process src/ --dry-run >> php-quality-issues.txt || true
 
-      # 8. 提交检测问题到文件，并确保添加所有未跟踪的文件
+      # 8. 提交检测问题到文件
       - name: Commit and Push php-quality-issues.txt
         run: |
           git config --global user.name "github-actions[bot]"
@@ -75,27 +75,24 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 9. 自动修复代码
+      # 9. 自动修复代码，但只在有修改时才提交
       - name: Apply Rector Fixes (Auto Fix)
         run: |
           # 使用 Rector 自动修复代码
           ~/.composer/vendor/bin/rector process src/ --apply || true
 
-      # 10. 创建新分支并提交修复
-      - name: Create New Branch for Fixes
+      # 10. 检查是否有更改，只有有修改时才提交
+      - name: Check for Changes and Commit
         run: |
-          # 创建新分支
-          git checkout -b fix/auto-repair
-          git add .
-          git commit -m "Apply auto fixes"
-          git push --set-upstream origin fix/auto-repair
+          # 检查是否有更改
+          git diff --exit-code || (git add -A && git commit -m "Apply auto fixes" && git push --set-upstream origin fix/auto-repair)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # 11. 创建 Pull Request
+      # 11. 创建 Pull Request（仅当有更改时）
       - name: Create Pull Request
+        if: success() && github.event_name == 'push' && steps.Check for Changes and Commit.outputs.status == 'success'
         run: |
-          # 使用 GitHub CLI 创建 Pull Request
           gh pr create --title "Automated PHP Fixes" --body "This pull request includes automated PHP fixes applied by Rector" --base main --head fix/auto-repair
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
