@@ -3,10 +3,10 @@ name: PHP Quality Checks
 on:
   push:
     branches:
-      - main
+      - main  # 使用 main 作为主分支
   pull_request:
     branches:
-      - main
+      - main  # 使用 main 作为主分支
 
 jobs:
   quality-checks:
@@ -14,6 +14,7 @@ jobs:
     strategy:
       matrix:
         php: ['7.4', '8.0', '8.1', '8.2']
+
     steps:
       # 1. Checkout 代码
       - name: Checkout code
@@ -65,11 +66,13 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main  # 拉取远程 main 分支的最新更改
+          git pull origin main --rebase  # 合并远程更改到本地
           git add php-quality-issues.txt
           git commit -m "Add PHP quality issues report"
-          git push https://github.com/${{ github.repository }}.git HEAD:main
+          git push origin main  # 推送到远程 main 分支
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 9. 自动修复代码
       - name: Apply Rector Fixes (Auto Fix)
@@ -86,7 +89,7 @@ jobs:
           git commit -m "Apply auto fixes"
           git push --set-upstream origin fix/auto-repair
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # 11. 创建 Pull Request
       - name: Create Pull Request
@@ -94,4 +97,4 @@ jobs:
           # 使用 GitHub CLI 创建 Pull Request
           gh pr create --title "Automated PHP Fixes" --body "This pull request includes automated PHP fixes applied by Rector" --base main --head fix/auto-repair
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
