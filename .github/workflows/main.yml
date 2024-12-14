@@ -68,7 +68,16 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin main  # 拉取远程 main 分支的最新更改
-          git pull origin main --rebase  # 合并远程更改到本地
+
+          # 暂存所有未提交的更改
+          git stash || echo "No changes to stash"
+
+          # 拉取远程更改并合并
+          git pull origin main --rebase
+
+          # 恢复暂存的更改
+          git stash pop || echo "No changes to apply"
+
           git add php-quality-issues.txt rector.php  # 确保 rector.php 被添加到版本控制
           git commit -m "Add PHP quality issues report"
           git push origin main  # 推送到远程 main 分支
