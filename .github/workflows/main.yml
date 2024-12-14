@@ -83,6 +83,7 @@ jobs:
 
       # 10. 检查是否有更改，只有有修改时才提交
       - name: Check for Changes and Commit
+        id: check-changes
         run: |
           # 检查是否有更改
           git diff --exit-code || (git add -A && git commit -m "Apply auto fixes" && git push --set-upstream origin fix/auto-repair)
@@ -91,7 +92,7 @@ jobs:
 
       # 11. 创建 Pull Request（仅当有更改时）
       - name: Create Pull Request
-        if: success() && github.event_name == 'push' && steps.Check for Changes and Commit.outputs.status == 'success'
+        if: steps.check-changes.outputs.status == 'success'
         run: |
           gh pr create --title "Automated PHP Fixes" --body "This pull request includes automated PHP fixes applied by Rector" --base main --head fix/auto-repair
         env:
