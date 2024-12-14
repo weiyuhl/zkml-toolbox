@@ -1,9 +1,0 @@
-ERROR: The file "src/" does not exist.
-
-Run "phpcs --help" for usage information
-
-
- [ERROR] The following given path does not match any file or directory:         
-                                                                                
-          - src/                                                                
-
