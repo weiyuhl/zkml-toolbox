@@ -3,10 +3,10 @@ name: PHP Quality Checks
 on:
   push:
     branches:
-      - main  # 使用 main 作为主分支
+      - main
   pull_request:
     branches:
-      - main  # 使用 main 作为主分支
+      - main
 
 jobs:
   quality-checks:
@@ -62,14 +62,14 @@ jobs:
         run: |
           ~/.composer/vendor/bin/rector process src/ --dry-run >> php-quality-issues.txt || true
 
-      # 8. 提交检测问题到文件
+      # 8. 提交检测问题到文件，并确保添加所有未跟踪的文件
       - name: Commit and Push php-quality-issues.txt
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin main  # 拉取远程 main 分支的最新更改
           git pull origin main --rebase  # 合并远程更改到本地
-          git add php-quality-issues.txt
+          git add php-quality-issues.txt rector.php  # 确保 rector.php 被添加到版本控制
           git commit -m "Add PHP quality issues report"
           git push origin main  # 推送到远程 main 分支
         env:
