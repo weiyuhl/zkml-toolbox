@@ -35,9 +35,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      # 4. 安装工具
-      - name: Install Tools
+      # 4. 安装工具并允许插件
+      - name: Install Tools and Allow Plugins
         run: |
+          composer global config allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
           composer global require phpstan/phpstan
           composer global require dealerdirect/phpcodesniffer-composer-installer phpcompatibility/php-compatibility
           ~/.composer/vendor/bin/phpcs --config-set installed_paths ~/.composer/vendor/phpcompatibility/php-compatibility
