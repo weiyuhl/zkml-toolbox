@@ -47,7 +47,7 @@ jobs:
       # 5. 运行 PHPStan 检查并将结果保存到文件
       - name: Run PHPStan (Output to file)
         run: |
-          ~/.composer/vendor/bin/phpstan analyse src/ > php-quality-issues.txt || true
+          ~/.composer/vendor/bin/phpstan analyse . --level=max --memory-limit=1G > php-quality-issues.txt || true
 
       # 6. 运行 PHPCompatibility 检查并将结果保存到文件
       - name: Run PHPCompatibility (Output to file)
@@ -55,12 +55,12 @@ jobs:
           ~/.composer/vendor/bin/phpcs \
           --standard=PHPCompatibility \
           --runtime-set testVersion 7.4-8.2 \
-          src/ >> php-quality-issues.txt || true
+          . >> php-quality-issues.txt || true
 
       # 7. 运行 Rector 检查并将结果保存到文件
       - name: Run Rector (Output to file)
         run: |
-          ~/.composer/vendor/bin/rector process src/ --dry-run >> php-quality-issues.txt || true
+          ~/.composer/vendor/bin/rector process . --dry-run >> php-quality-issues.txt || true
 
       # 8. 提交检测问题到文件
       - name: Commit and Push php-quality-issues.txt
@@ -91,7 +91,7 @@ jobs:
       - name: Apply Rector Fixes (Auto Fix)
         run: |
           # 使用 Rector 自动修复代码
-          ~/.composer/vendor/bin/rector process src/ --apply || true
+          ~/.composer/vendor/bin/rector process . --apply || true
 
       # 10. 检查是否有更改，只有有修改时才提交
       - name: Check for Changes and Commit
